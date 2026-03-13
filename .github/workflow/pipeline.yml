@@ -1,0 +1,54 @@
+name: integracao continua
+
+
+
+on:
+
+  push:
+
+    branches: [ "develop" ]
+
+  pull_request:
+
+    branches: [ "develop" ]
+
+
+
+jobs:
+
+  estagio_build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout do código
+
+        uses: actions/checkout@v4
+
+
+
+      - name: Configurar Node.js 18
+
+        uses: actions/setup-node@v4
+
+        with:
+
+          node-version: '18'
+
+          # Dica: Adicionar cache ajuda o pipeline a rodar mais rápido
+
+          cache: 'npm'
+
+
+
+      - name: Instalar dependências
+
+        run: npm ci
+
+
+
+      - name: Build do projeto
+
+        run: npm run build
+
