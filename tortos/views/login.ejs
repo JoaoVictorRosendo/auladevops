@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Torto's | Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top left, #7c3aed, transparent 28%),
+                    radial-gradient(circle at bottom right, #4c1d95, transparent 26%),
+                    #0f0a1e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+    .card {
+        width: 100%;
+        max-width: 420px;
+        padding: 32px;
+        background: #1e1535;
+        border-radius: 28px;
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(124, 58, 237, 0.25);
+    }
+    .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .brand-icon {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        color: white;
+        border-radius: 14px;
+        font-size: 1.25rem;
+    }
+    .brand-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        line-height: 1.2;
+    }
+    h1 {
+        margin: 0 0 20px;
+        font-size: 1.65rem;
+        color: #f1f5f9;
+    }
+    .hint {
+        margin-bottom: 24px;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+    .field {
+        margin-bottom: 18px;
+    }
+    .field label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #cbd5e1;
+    }
+    .field input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid #2d2050;
+        background: #0f0a1e;
+        font-size: 1rem;
+        color: #f1f5f9;
+    }
+    .field input:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+    }
+    button {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 14px 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        cursor: pointer;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba(124, 58, 237, 0.35);
+    }
+    .footer {
+        margin-top: 22px;
+        font-size: 0.92rem;
+        color: #475569;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="brand">
+        <div class="brand-icon">🍽️</div>
+        <div class="brand-title">Torto's</div>
+    </div>
+    <h1>Login de Acesso</h1>
+    <p class="hint">Acesse o sistema de gestão do restaurante.</p>
+
+    <form id="loginForm" method="POST" action="/login">
+        <div class="field">
+            <label for="username">Usuário</label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+        </div>
+        <div class="field">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit">Entrar</button>
+    </form>
+    <div class="footer">© 2026 Torto's • Sistema de Gestão</div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!username || !password) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos antes de entrar.');
+        }
+    });
+</script>
+</body>
+</html>

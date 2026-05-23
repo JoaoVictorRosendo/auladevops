@@ -1,0 +1,16 @@
+{
+  "name": "tortos",
+  "version": "1.0.0",
+  "description": "Torto's - Sistema de Gestão de Restaurante",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "1.18.3",
+    "ejs": "3.1.6",
+    "express": "4.16.0",
+    "mysql2": "3.9.1"
+  }
+}
