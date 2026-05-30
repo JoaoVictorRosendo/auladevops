@@ -1,83 +1,65 @@
 const https = require('https');
 
-// Função utilitária para fazer requisição nativa sem usar pacotes externos (fetch/axios)
+// Faz requisição HTTP nativa sem dependências externas
 function fetchViaCEP(cep) {
     return new Promise((resolve, reject) => {
-        const url = `https://viacep.com.br/ws/${cep}/json/`;
-        https.get(url, (res) => {
+        https.get(`https://viacep.com.br/ws/${cep}/json/`, (res) => {
             let data = '';
-
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-
+            res.on('data', chunk => data += chunk);
             res.on('end', () => {
                 try {
-                    const json = JSON.parse(data);
-                    resolve(json);
+                    resolve(JSON.parse(data));
                 } catch (e) {
                     reject(new Error('Erro ao fazer parse da resposta'));
                 }
             });
-        }).on('error', (err) => {
-            reject(err);
-        });
+        }).on('error', reject);
     });
 }
 
 async function runTests() {
     console.log('--- Iniciando Testes da API ViaCEP ---');
 
-    // Teste 1: CEP Válido (Praça da Sé)
+    // Teste 1: CEP válido
     try {
-        console.log('\nTeste 1: Consultando CEP Válido (01001000)...');
-        const validCepData = await fetchViaCEP('01001000');
-        
-        if (validCepData.logradouro === 'Praça da Sé' && validCepData.localidade === 'São Paulo') {
-            console.log('✅ PASSOU: Retornou endereço correto (Praça da Sé, São Paulo).');
+        console.log('\nTeste 1: CEP válido (01001000)...');
+        const data = await fetchViaCEP('01001000');
+        if (data.logradouro === 'Praça da Sé' && data.localidade === 'São Paulo') {
+            console.log('✅ PASSOU');
         } else {
-            console.error('❌ FALHOU: O endereço retornado não corresponde ao esperado.', validCepData);
+            console.error('❌ FALHOU: endereço inesperado', data);
         }
     } catch (e) {
-        console.error('❌ FALHOU: Erro na requisição do Teste 1', e);
+        console.error('❌ FALHOU:', e);
     }
 
-    // Teste 2: CEP Inexistente
+    // Teste 2: CEP inexistente
     try {
-        console.log('\nTeste 2: Consultando CEP Inexistente (99999999)...');
-        const invalidCepData = await fetchViaCEP('99999999');
-        
-        if (invalidCepData.erro === "true" || invalidCepData.erro === true) {
-            console.log('✅ PASSOU: Retornou erro indicando que o CEP não existe.');
+        console.log('\nTeste 2: CEP inexistente (99999999)...');
+        const data = await fetchViaCEP('99999999');
+        if (data.erro === 'true' || data.erro === true) {
+            console.log('✅ PASSOU');
         } else {
-            console.error('❌ FALHOU: Não retornou a propriedade "erro" como esperado.', invalidCepData);
+            console.error('❌ FALHOU:', data);
         }
     } catch (e) {
-        console.error('❌ FALHOU: Erro na requisição do Teste 2', e);
+        console.error('❌ FALHOU:', e);
     }
 
-    // Teste 3: Formato Inválido
+    // Teste 3: formato inválido — a API retorna HTML ou erro de parse
     try {
-        console.log('\nTeste 3: Consultando CEP com formato inválido (ABC)...');
-        // A API via cep pode retornar 400 Bad Request para formato inválido
-        // Como o https.get não rejeita Promise em 400, precisamos tratar ou simplesmente
-        // sabemos que a API via CEP retorna um HTML se o formato for muito bizarro
-        const badFormatData = await fetchViaCEP('ABC').catch(e => e);
-        
-        if (badFormatData instanceof Error) {
-            console.log('✅ PASSOU: Requisição rejeitada por formato inválido (Erro de parse JSON esperado).');
-        } else if (badFormatData.erro) {
-            console.log('✅ PASSOU: Retornou erro explícito.');
+        console.log('\nTeste 3: formato inválido (ABC)...');
+        const data = await fetchViaCEP('ABC').catch(e => e);
+        if (data instanceof Error || data.erro) {
+            console.log('✅ PASSOU');
         } else {
-            console.error('❌ FALHOU: Esperava erro, mas retornou:', badFormatData);
+            console.error('❌ FALHOU:', data);
         }
     } catch (e) {
-        // Se cair aqui, também passou
-        console.log('✅ PASSOU: Retornou erro HTTP ao buscar CEP inválido.');
+        console.log('✅ PASSOU');
     }
 
     console.log('\n--- Testes Finalizados ---');
 }
 
-// Executar os testes
 runTests();
