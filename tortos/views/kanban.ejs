@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Torto's | Kanban</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top left, #7c3aed, transparent 28%),
+                    radial-gradient(circle at bottom right, #4c1d95, transparent 26%),
+                    #0f0a1e;
+        padding: 24px;
+        color: #f1f5f9;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 32px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .brand-icon {
+        width: 44px; height: 44px; display: grid; place-items: center;
+        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        color: white; border-radius: 14px; font-size: 1.25rem;
+    }
+    .brand-title { font-size: 1.35rem; font-weight: 700; color: #f1f5f9; line-height: 1.2; }
+    h1 { font-size: 1.65rem; color: #f1f5f9; margin: 0; }
+    .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .column {
+        background: #1e1535; border-radius: 28px;
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        padding: 24px; min-height: 400px;
+    }
+    .column h2 { margin: 0 0 16px; font-size: 1.25rem; color: #f1f5f9; text-align: center; }
+    .order-card {
+        background: #0f0a1e; border-radius: 14px; padding: 16px;
+        margin-bottom: 12px; border: 1px solid #2d2050;
+    }
+    .order-info { font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }
+    .order-item { color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; }
+    .order-status {
+        display: inline-block; padding: 4px 8px; border-radius: 4px;
+        font-size: 0.8rem; font-weight: 600; color: #a78bfa;
+        background: rgba(124, 58, 237, 0.2); margin-bottom: 12px;
+    }
+    .advance-btn {
+        width: 100%; border: none; border-radius: 8px; padding: 8px;
+        font-size: 0.9rem; font-weight: 600; color: white;
+        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        cursor: pointer; transition: transform 0.2s ease;
+    }
+    .advance-btn:hover { transform: translateY(-1px); }
+    .footer { margin-top: 32px; font-size: 0.92rem; color: #475569; text-align: center; }
+    .back-link {
+        display: block; text-align: center; margin-top: 16px;
+        color: #a78bfa; text-decoration: none; font-weight: 600;
+    }
+    .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="brand">
+            <div class="brand-icon">🍳</div>
+            <div class="brand-title">Torto's</div>
+        </div>
+        <h1>Painel Kanban da Cozinha</h1>
+    </div>
+
+    <div class="kanban">
+        <div class="column" id="aberto">
+            <h2>Aberto</h2>
+            <% orders.filter(o => o.status === 'Aberto').forEach(order => { %>
+                <div class="order-card" id="card-<%= order.id %>" data-id="<%= order.id %>" data-status="<%= order.status %>">
+                    <div class="order-info">Pedido #<%= order.id %> - <%= order.customer_name %></div>
+                    <div class="order-item"><%= order.item_name || 'N/A' %></div>
+                    <% if (order.rua) { %>
+                        <div class="order-item" style="font-size: 0.8rem; margin-bottom: 12px; line-height: 1.3;">
+                            📍 <%= order.rua %>, <%= order.bairro %><br>
+                            <%= order.cidade %> - <%= order.estado %>
+                        </div>
+                    <% } %>
+                    <div class="order-status"><%= order.status %></div>
+                    <button class="advance-btn" onclick="advanceStatus(<%= order.id %>, '<%= order.status %>')">Avançar para Cozinha</button>
+                </div>
+            <% }); %>
+        </div>
+        <div class="column" id="cozinha">
+            <h2>Cozinha</h2>
+            <% orders.filter(o => o.status === 'Cozinha').forEach(order => { %>
+                <div class="order-card" id="card-<%= order.id %>" data-id="<%= order.id %>" data-status="<%= order.status %>">
+                    <div class="order-info">Pedido #<%= order.id %> - <%= order.customer_name %></div>
+                    <div class="order-item"><%= order.item_name || 'N/A' %></div>
+                    <% if (order.rua) { %>
+                        <div class="order-item" style="font-size: 0.8rem; margin-bottom: 12px; line-height: 1.3;">
+                            📍 <%= order.rua %>, <%= order.bairro %><br>
+                            <%= order.cidade %> - <%= order.estado %>
+                        </div>
+                    <% } %>
+                    <div class="order-status"><%= order.status %></div>
+                    <button class="advance-btn" onclick="advanceStatus(<%= order.id %>, '<%= order.status %>')">Avançar para Entrega</button>
+                </div>
+            <% }); %>
+        </div>
+        <div class="column" id="entrega">
+            <h2>Entrega</h2>
+            <% orders.filter(o => o.status === 'Entrega').forEach(order => { %>
+                <div class="order-card" id="card-<%= order.id %>" data-id="<%= order.id %>" data-status="<%= order.status %>">
+                    <div class="order-info">Pedido #<%= order.id %> - <%= order.customer_name %></div>
+                    <div class="order-item"><%= order.item_name || 'N/A' %></div>
+                    <% if (order.rua) { %>
+                        <div class="order-item" style="font-size: 0.8rem; margin-bottom: 12px; line-height: 1.3;">
+                            📍 <%= order.rua %>, <%= order.bairro %><br>
+                            <%= order.cidade %> - <%= order.estado %>
+                        </div>
+                    <% } %>
+                    <div class="order-status"><%= order.status %></div>
+                    <button class="advance-btn" onclick="advanceStatus(<%= order.id %>, '<%= order.status %>')">Marcar como Entregue</button>
+                </div>
+            <% }); %>
+        </div>
+        <div class="column" id="entregue">
+            <h2>Entregue</h2>
+            <% orders.filter(o => o.status === 'Entregue').forEach(order => { %>
+                <div class="order-card" id="card-<%= order.id %>" data-id="<%= order.id %>" data-status="<%= order.status %>">
+                    <div class="order-info">Pedido #<%= order.id %> - <%= order.customer_name %></div>
+                    <div class="order-item"><%= order.item_name || 'N/A' %></div>
+                    <% if (order.rua) { %>
+                        <div class="order-item" style="font-size: 0.8rem; margin-bottom: 12px; line-height: 1.3;">
+                            📍 <%= order.rua %>, <%= order.bairro %><br>
+                            <%= order.cidade %> - <%= order.estado %>
+                        </div>
+                    <% } %>
+                    <div class="order-status"><%= order.status %></div>
+                    <span style="color: #94a3b8; font-size: 0.9rem;">Finalizado</span>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <a href="/dashboard" class="back-link">Voltar ao Dashboard</a>
+    <div class="footer">© 2026 Torto's • Sistema de Gestão</div>
+</div>
+
+<script>
+    async function advanceStatus(id, currentStatus) {
+        try {
+            const response = await fetch('/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: currentStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                const newStatus = data.newStatus;
+                const card = document.getElementById(`card-${id}`);
+                card.dataset.status = newStatus;
+                card.querySelector('.order-status').textContent = newStatus;
+                const btn = card.querySelector('.advance-btn');
+                if (newStatus === 'Entregue') {
+                    const span = document.createElement('span');
+                    span.textContent = 'Finalizado';
+                    span.style.cssText = 'color: #94a3b8; font-size: 0.9rem;';
+                    btn.parentNode.replaceChild(span, btn);
+                } else {
+                    btn.textContent = getNextButtonText(newStatus);
+                    btn.setAttribute('onclick', `advanceStatus(${id}, '${newStatus}')`);
+                }
+                const newColId = newStatus.toLowerCase();
+                const newCol = document.getElementById(newColId);
+                newCol.appendChild(card);
+            } else { alert('Erro ao atualizar status: ' + data.error); }
+        } catch (error) { alert('Erro de rede: ' + error.message); }
+    }
+
+    function getNextButtonText(status) {
+        if (status === 'Cozinha') return 'Avançar para Entrega';
+        if (status === 'Entrega') return 'Marcar como Entregue';
+        return 'Avançar para Cozinha';
+    }
+</script>
+</body>
+</html>

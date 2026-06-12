@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Torto's | Criar Pedido</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #7c3aed;
+        --primary-light: #9f67fa;
+        --secondary: #a78bfa;
+        --bg: #0f0a1e;
+        --surface: #1e1535;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border: #2d2050;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-lg: 0 20px 40px -5px rgba(124, 58, 237, 0.3);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--bg);
+        background-image: 
+            radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 40%),
+            radial-gradient(circle at 100% 100%, rgba(167, 139, 250, 0.08) 0%, transparent 40%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        min-height: 100vh; padding: 40px 24px;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .container { max-width: 600px; width: 100%; }
+
+    .card {
+        background: var(--surface); border-radius: var(--radius-lg);
+        padding: 40px; box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header { text-align: center; margin-bottom: 32px; }
+    .header h2 { font-size: 1.75rem; color: var(--text-main); margin-bottom: 8px; }
+    .header p { color: var(--text-muted); font-size: 1.05rem; }
+
+    .item-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(124, 58, 237, 0.15); color: var(--secondary);
+        padding: 8px 16px; border-radius: 20px; font-weight: 600; margin-top: 12px;
+    }
+
+    .form-group { margin-bottom: 24px; position: relative; }
+
+    label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--text-main); }
+
+    input {
+        width: 100%; padding: 16px; border-radius: var(--radius-md);
+        border: 2px solid var(--border); background: var(--bg);
+        font-size: 1.05rem; font-family: inherit; color: var(--text-main);
+        transition: all 0.2s ease;
+    }
+
+    input:focus {
+        outline: none; border-color: var(--primary); background: #160d2e;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+    }
+
+    input[readonly] { background: #160d2e; border-color: var(--border); color: var(--text-muted); }
+
+    .row { display: flex; gap: 16px; }
+    .row .form-group { flex: 1; }
+
+    .address-section { display: none; animation: fadeIn 0.4s ease; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .loading-indicator {
+        position: absolute; right: 16px; top: 45px; display: none;
+        border: 3px solid rgba(124, 58, 237, 0.2);
+        border-top: 3px solid var(--primary);
+        border-radius: 50%; width: 24px; height: 24px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .error-msg { color: #f87171; font-size: 0.9rem; margin-top: 6px; display: none; }
+
+    button[type="submit"] {
+        width: 100%; border: none; border-radius: var(--radius-md);
+        padding: 18px; font-size: 1.1rem; font-weight: 700; font-family: inherit;
+        color: white;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        cursor: pointer; transition: all 0.3s ease;
+        box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3); margin-top: 16px;
+    }
+
+    button[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(124, 58, 237, 0.45); }
+
+    .back-btn {
+        display: block; text-align: center; margin-top: 24px;
+        color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--secondary); }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h2>Criar Novo Pedido</h2>
+            <p>Preencha os dados do cliente para o envio</p>
+            <div class="item-badge">
+                🍳 <%= item.name %> (<%= item.category || 'Sem Categoria' %>)
+            </div>
+        </div>
+
+        <form action="/create-order" method="POST">
+            <input type="hidden" name="item_id" value="<%= item.id %>">
+            
+            <div class="form-group">
+                <label for="customer_name">Nome do Cliente</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="Ex: João da Silva" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cep">CEP</label>
+                <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required autocomplete="off">
+                <div class="loading-indicator" id="cepLoading"></div>
+                <div class="error-msg" id="cepError">CEP não encontrado ou inválido.</div>
+            </div>
+
+            <div class="address-section" id="addressSection">
+                <div class="form-group">
+                    <label for="rua">Rua / Logradouro</label>
+                    <input type="text" id="rua" name="rua" readonly required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" id="bairro" name="bairro" readonly required>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade" name="cidade" readonly required>
+                    </div>
+                    <div class="form-group" style="flex: 0.4;">
+                        <label for="estado">Estado</label>
+                        <input type="text" id="estado" name="estado" readonly required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit">Finalizar Pedido</button>
+            <a href="/dashboard" class="back-btn">Cancelar e Voltar</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    const viacepBaseUrl = "<%= viacepUrl %>";
+    const cepInput = document.getElementById('cep');
+    const loading = document.getElementById('cepLoading');
+    const errorMsg = document.getElementById('cepError');
+    const addressSection = document.getElementById('addressSection');
+    const inputRua = document.getElementById('rua');
+    const inputBairro = document.getElementById('bairro');
+    const inputCidade = document.getElementById('cidade');
+    const inputEstado = document.getElementById('estado');
+
+    cepInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) { value = value.substring(0, 5) + '-' + value.substring(5, 8); }
+        e.target.value = value;
+        if (value.length === 9) { fetchAddress(value.replace('-', '')); }
+        else { addressSection.style.display = 'none'; errorMsg.style.display = 'none'; clearAddressFields(); }
+    });
+
+    async function fetchAddress(cepLimpo) {
+        loading.style.display = 'block'; errorMsg.style.display = 'none';
+        try {
+            const url = `${viacepBaseUrl}${cepLimpo}/json/`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Erro na requisição');
+            const data = await response.json();
+            if (data.erro) { showError(); } else { fillAddress(data); }
+        } catch (err) { showError(); }
+        finally { loading.style.display = 'none'; }
+    }
+
+    function fillAddress(data) {
+        inputRua.value = data.logradouro || '';
+        inputBairro.value = data.bairro || '';
+        inputCidade.value = data.localidade || '';
+        inputEstado.value = data.uf || '';
+        addressSection.style.display = 'block';
+    }
+
+    function clearAddressFields() { inputRua.value = ''; inputBairro.value = ''; inputCidade.value = ''; inputEstado.value = ''; }
+    function showError() { clearAddressFields(); addressSection.style.display = 'none'; errorMsg.style.display = 'block'; }
+</script>
+
+</body>
+</html>
