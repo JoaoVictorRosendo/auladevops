@@ -62,9 +62,12 @@ jobs:
       - name: Instalar ESLint
         run: npm install --no-save eslint
 
-      - name: Criar configuração do ESLint
-        run: node -e "require('fs').writeFileSync('eslint.config.js', 'module.exports=[{files:[\"**/*.js\"],ignores:[\"node_modules/**\",\".git/**\"],languageOptions:{ecmaVersion:2021,sourceType:\"commonjs\",globals:{process:\"readonly\",console:\"readonly\",__dirname:\"readonly\",__filename:\"readonly\",require:\"readonly\",module:\"readonly\",exports:\"writable\",Buffer:\"readonly\",setTimeout:\"readonly\",clearTimeout:\"readonly\",setInterval:\"readonly\",clearInterval:\"readonly\",global:\"readonly\"}},rules:{"no-unused-vars\":\"warn\",\"no-undef\":\"error\"}}];')"
-
+     - name: Criar configuração do ESLint
+        run: |
+          node -e "
+          const fs = require('fs');
+          fs.writeFileSync('eslint.config.js', 'module.exports = [{files:[\"**/*.js\"],ignores:[\"node_modules/**\",\".git/**\"],languageOptions:{ecmaVersion:2021,sourceType:\"commonjs\",globals:{process:\"readonly\",console:\"readonly\",__dirname:\"readonly\",__filename:\"readonly\",require:\"readonly\",module:\"readonly\",exports:\"writable\",Buffer:\"readonly\",setTimeout:\"readonly\",clearTimeout:\"readonly\",setInterval:\"readonly\",clearInterval:\"readonly\",global:\"readonly\"}},rules:{\"no-unused-vars\":\"warn\",\"no-undef\":\"error\"}}];');
+          "
       - name: Rodar lint
         run: npx eslint .
 
