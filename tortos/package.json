@@ -9,8 +9,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "1.18.3",
-    "ejs": "3.1.6",
-    "express": "4.16.0",
-    "mysql2": "3.9.1"
+    "ejs": "^3.1.10",
+    "express": "^4.22.2",
+    "mysql2": "^3.22.5"
   }
 }
