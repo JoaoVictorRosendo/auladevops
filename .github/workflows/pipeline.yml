@@ -139,3 +139,5 @@ jobs:
             # Instala dependências e reinicia
             npm install --production
             pm2 restart meu-projeto || npm run start
+            # Entra na maquina virtual
+            ssh -i ~/SSH_PRIVATE_KEY_novo.pem ubuntu@54.224.149.145
