@@ -129,15 +129,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          script: |
-            # Navega para a pasta do projeto e entra na subpasta do app
+         script: |
             cd /home/ubuntu/sua-aplicacao-faculdade/tortos
-            
-            # Puxa o código atualizado
             git pull origin staging
-            
-            # Instala dependências e reinicia
             npm install --production
-            pm2 restart meu-projeto || npm run start
-            # Entra na maquina virtual
-            ssh -i ~/SSH_PRIVATE_KEY_novo.pem ubuntu@54.224.149.145
+            pm2 restart meu-projeto || pm2 start index.js --name "meu-projeto"
+
